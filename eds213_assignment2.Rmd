@@ -1,0 +1,112 @@
+---
+title: "EDS 213 Assignment 2"
+author: "Scout Leonard"
+date: "10/7/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(dataRetrieval)
+library(tidyverse)
+library(metajam)
+library(here)
+```
+# Class Assignment
+
+## Exercise 1
+
+Start a new Markdown document to plot the discharge time-series for the Ventura River from 2019-10-01 to 2020-10-05
+```{r}
+siteNumber <- "11118500"
+paramaterCd <- "00060"
+startDate <- "2019-10-01"
+endDate <- "2020-10-05"
+
+ventura_discharge <- readNWISdv(siteNumber, paramaterCd, startDate, endDate)
+```
+
+```{r}
+names(ventura_discharge) #looking at the column names
+
+renamed_ventura_discharge <- renameNWISColumns(ventura_discharge) #rename columns
+```
+
+```{r}
+ventura_flow_over_time <- ggplot(data = renamed_ventura_discharge, aes(x = Date, y = Flow)) +
+  geom_line()
+
+ventura_flow_over_time
+```
+### Bonus
+
+```{r}
+siteNumber1 <- "11118500"
+paramaterCd1 <- "00060"
+startDate1 <- ""
+endDate1 <- "2020-10-05"
+
+find_start_date <- readNWISdv(siteNumber1, paramaterCd1, startDate1, endDate1)
+
+summary(find_start_date$Date)
+```
+
+*Using the API, i determined that the stream gauge data started October 1st, 1929.*
+
+## Exercise 2
+
+```{r, eval = FALSE}
+#set inputs
+data_obj <- "https://cn.dataone.org/cn/v2/resolve/urn:uuid:7fc6f6db-c5ea-426a-a743-1f2edafb43b8"
+
+path <- "~/Documents/MEDS/term_2/eds213/assignments/eds213_assignment2"
+
+#download data and metadata
+download_d1_data(data_obj, path)
+```
+
+```{r}
+alaska_data <- read_d1_files("~/Documents/MEDS/term_2/eds213/class_notes/eds213_notes/doi_10.5063_F1CJ8BPH__household_language__csv")
+```
+
+```{r}
+household_languages <- read.csv(here("doi_10.5063_F1CJ8BPH__household_language__csv", "household_language.csv"))
+```
+
+```{r}
+alaska_english <- household_languages %>% 
+  filter(Year >= 2009 & Year <= 2015) %>% 
+  group_by(Year) %>% 
+  mutate(percent_english_only = speak_only_english/total)
+
+
+```
+
+```{r}
+ggplot(data = alaska_english, aes(x = Year, y = percent_english_only)) +
+  geom_point()
+```
+
+
+# Homework: Assignment 2
+
+## Assignment 2.1
+
+1.) Add the [Santa Paula Creek](https://waterdata.usgs.gov/nwis/uv?site_no=11113500) gauge to exercise we did in class
+```{r}
+siteNumber <- "11113500"
+paramaterCd <- "00060"
+startDate <- ""
+endDate <- ""
+
+spcreek_discharge <- readNWISdv(siteNumber, paramaterCd, startDate, endDate)
+
+```
+
+```{r}
+
+```
+
