@@ -78,11 +78,11 @@ household_languages <- read.csv(here("doi_10.5063_F1CJ8BPH__household_language__
 
 ```{r}
 alaska_english <- household_languages %>% 
-  filter(Year >= 2009 & Year <= 2015) %>% 
+  filter(Year >= 2009 & Year <= 2015)
+
+mean_by_year <- alaska_english %>% 
   group_by(Year) %>% 
-  mutate(percent_english_only = speak_only_english/total)
-
-
+  summarize(percent_english_speaking = speak_only_english / total)
 ```
 
 ```{r}
