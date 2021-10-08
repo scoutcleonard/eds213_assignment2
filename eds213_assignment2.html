@@ -171,25 +171,17 @@ pre code {
 </div>
 
 
-<pre class="r"><code>library(dataRetrieval)</code></pre>
-<pre><code>## Warning: package &#39;dataRetrieval&#39; was built under R version 4.1.1</code></pre>
-<pre class="r"><code>library(tidyverse)</code></pre>
 <pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──</code></pre>
 <pre><code>## ✓ ggplot2 3.3.5     ✓ purrr   0.3.4
 ## ✓ tibble  3.1.5     ✓ dplyr   1.0.7
 ## ✓ tidyr   1.1.4     ✓ stringr 1.4.0
 ## ✓ readr   2.0.0     ✓ forcats 0.5.1</code></pre>
-<pre><code>## Warning: package &#39;tibble&#39; was built under R version 4.1.1</code></pre>
-<pre><code>## Warning: package &#39;tidyr&#39; was built under R version 4.1.1</code></pre>
 <pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ## x dplyr::filter() masks stats::filter()
 ## x dplyr::lag()    masks stats::lag()</code></pre>
-<pre class="r"><code>library(metajam)</code></pre>
-<pre><code>## Warning: package &#39;metajam&#39; was built under R version 4.1.1</code></pre>
-<pre class="r"><code>library(here)</code></pre>
 <pre><code>## here() starts at /Users/scoutleonard/Documents/MEDS/term_2/eds213/assignments/eds213_assignment2</code></pre>
 <div id="class-assignment" class="section level1">
-<h1>Class Assignment</h1>
+<h1><a href="https://brunj7.github.io/EDS-213-metadata/week_2.html">Class Assignment</a></h1>
 <div id="exercise-1" class="section level2">
 <h2>Exercise 1</h2>
 <p>Start a new Markdown document to plot the discharge time-series for the Ventura River from 2019-10-01 to 2020-10-05</p>
@@ -218,7 +210,7 @@ find_start_date &lt;- readNWISdv(siteNumber1, paramaterCd1, startDate1, endDate1
 summary(find_start_date$Date)</code></pre>
 <pre><code>##         Min.      1st Qu.       Median         Mean      3rd Qu.         Max. 
 ## &quot;1929-10-01&quot; &quot;1952-07-02&quot; &quot;1975-04-04&quot; &quot;1975-04-04&quot; &quot;1998-01-03&quot; &quot;2020-10-05&quot;</code></pre>
-<p><em>Using the API, i determined that the stream gauge data started October 1st, 1929.</em></p>
+<p><em>Using the API, I determined that the stream gauge data started October 1st, 1929.</em></p>
 </div>
 <div id="exercise-2" class="section level2">
 <h2>Exercise 2</h2>
@@ -254,13 +246,21 @@ download_d1_data(data_obj, path)</code></pre>
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 <pre class="r"><code>household_languages &lt;- read.csv(here(&quot;doi_10.5063_F1CJ8BPH__household_language__csv&quot;, &quot;household_language.csv&quot;))</code></pre>
 <pre class="r"><code>alaska_english &lt;- household_languages %&gt;% 
-  filter(Year &gt;= 2009 &amp; Year &lt;= 2015) %&gt;% 
-  mutate(percent_english_only = speak_only_english/total) %&gt;% 
-  group_by(Year) </code></pre>
+  filter(Year &gt;= 2009 &amp; Year &lt;= 2015)
+
+mean_by_year &lt;- alaska_english %&gt;% 
+  mutate(percent_english_speaking = speak_only_english / total, na.rm = TRUE) %&gt;% 
+  group_by(Year) %&gt;% 
+  summarize(average_eng_percent_byyear = mean(percent_english_speaking))</code></pre>
+<pre class="r"><code>#plot </code></pre>
+<div id="bonus" class="section level3">
+<h3>Bonus</h3>
+<p>How does it compare to French?</p>
+</div>
 </div>
 </div>
 <div id="homework-assignment-2" class="section level1">
-<h1>Homework: Assignment 2</h1>
+<h1><a href="https://brunj7.github.io/EDS-213-metadata/assignments_w2.html">Homework: Assignment 2</a></h1>
 <div id="assignment-2.1" class="section level2">
 <h2>Assignment 2.1</h2>
 <p>1.) Add the <a href="https://waterdata.usgs.gov/nwis/uv?site_no=11113500">Santa Paula Creek</a> gauge to exercise we did in class</p>
@@ -270,6 +270,7 @@ startDate &lt;- &quot;&quot;
 endDate &lt;- &quot;&quot;
 
 spcreek_discharge &lt;- readNWISdv(siteNumber, paramaterCd, startDate, endDate)</code></pre>
+<p>2.) What is the best way to query multiple sites using this R package?</p>
 </div>
 </div>
 
