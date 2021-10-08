@@ -107,6 +107,5 @@ spcreek_discharge <- readNWISdv(siteNumber, paramaterCd, startDate, endDate)
 ```
 
 ```{r}
-
 ```
 
