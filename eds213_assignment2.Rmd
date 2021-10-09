@@ -2,11 +2,17 @@
 title: "EDS 213 Assignment 2"
 author: "Scout Leonard"
 date: "10/7/2021"
-output: html_document
+output: 
+  html_document:
+    theme: flatly
+    toc: true
+    toc_float: true
+    code_folding: hide
+  
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 ```
 
 ```{r, warning=FALSE, echo = FALSE}
@@ -16,27 +22,33 @@ library(metajam)
 library(here)
 ```
 
-# [Class Assignment](https://brunj7.github.io/EDS-213-metadata/week_2.html)
+# [Class Assignment](https://brunj7.github.io/EDS-213-metadata/week_2.html): Using APIs Lab
+##USGS `dataretrieval` R package to retrieve hydrological data
 
-## Exercise 1
+### Exercise 1
 
-Start a new Markdown document to plot the discharge time-series for the Ventura River from 2019-10-01 to 2020-10-05
-```{r}
+Start a new Markdown document to plot the discharge time-series for the Ventura River from 2019-10-01 to 2020-10-05.
+
+```{r Use API to call Ventura River Data}
+
 siteNumber <- "11118500"
 paramaterCd <- "00060"
 startDate <- "2019-10-01"
 endDate <- "2020-10-05"
 
 ventura_discharge <- readNWISdv(siteNumber, paramaterCd, startDate, endDate)
+
 ```
 
-```{r}
-names(ventura_discharge) #looking at the column names
+```{r Look at and Rename the Data}
+
+# names(ventura_discharge) #looking at the column names
 
 renamed_ventura_discharge <- renameNWISColumns(ventura_discharge) #rename columns
 ```
 
-```{r}
+```{r Plot the flow over time}
+
 ventura_flow_over_time <- ggplot(data = renamed_ventura_discharge, aes(x = Date, y = Flow)) +
   geom_line()
 
@@ -44,26 +56,34 @@ ventura_flow_over_time
 ```
 ### Bonus
 
+How would you try to determine when this stream gauge record started using the API?
+
 ```{r}
 siteNumber1 <- "11118500"
 paramaterCd1 <- "00060"
-startDate1 <- ""
+startDate1 <- "" #by including no date, I call data from the very beginning of when data was collected at this site
 endDate1 <- "2020-10-05"
 
 find_start_date <- readNWISdv(siteNumber1, paramaterCd1, startDate1, endDate1)
 
-summary(find_start_date$Date)
+summary(find_start_date$Date) #using summary, I can find the minimum date in the Data column, which is the datrt date
 ```
 
 *Using the API, I determined that the stream gauge data started October 1st, 1929.*
 
-## Exercise 2
+##`metajam`
+
+The `metajam` R package relies on the dataONE API to download data and metadata into your R Environment. It is currently supporting KNB, ADC and EDI repositories because they rely on the metadata standard EML.
+
+### Exercise 2
+
+Let’s determine what percentage of Alaskan household are speaking only English!
 
 ```{r, eval = FALSE}
 #set inputs
 data_obj <- "https://cn.dataone.org/cn/v2/resolve/urn:uuid:7fc6f6db-c5ea-426a-a743-1f2edafb43b8"
 
-path <- "~/Documents/MEDS/term_2/eds213/assignments/eds213_assignment2"
+path <- "~/Documents/MEDS/term_2/eds213/class_notes/eds213_notes"
 
 #download data and metadata
 download_d1_data(data_obj, path)
@@ -72,12 +92,21 @@ download_d1_data(data_obj, path)
 ```{r}
 alaska_data <- read_d1_files("~/Documents/MEDS/term_2/eds213/class_notes/eds213_notes/doi_10.5063_F1CJ8BPH__household_language__csv")
 ```
+```{r}
+household_languages <- read.csv(here("doi_10.5063_F1CJ8BPH__household_language__csv", "household_language.csv"))
+```
+
+```{r}
+alaska_metadata <- read.csv(here("doi_10.5063_F1CJ8BPH__household_language__csv", "household_language_summary__metadata_csv"))
+```
+
 
 ```{r}
 household_languages <- read.csv(here("doi_10.5063_F1CJ8BPH__household_language__csv", "household_language.csv"))
 ```
 
 ```{r}
+
 alaska_english <- household_languages %>% 
   filter(Year >= 2009 & Year <= 2015)
 
@@ -114,11 +143,11 @@ spcreek_discharge_1 <- readNWISdv(siteNumber_1, paramaterCd_1, startDate_1, endD
 
 2.) What is the best way to query multiple sites using this R package?
 
-**The best way to query multiple sites using this R package is to assign the siteNumbers aregument a vector with multiple site numbers of interest. **
+**The best way to query multiple sites using this R package is to assign the siteNumbers argument a vector with multiple site numbers of interest. **
 
 3.) Create a plot showing any stream flow response to the rain of last night (10/04). Determine at what time did the stream flow peaked (if any) at the two locations?
 
-```{r}
+```{r Load in Time Data for Santa Paula Creek}
 siteNumber_3 <- "11113500"
 paramaterCd_3 <- "00060"
 startDate_3 <- "2021-10-03"
@@ -128,4 +157,39 @@ spcreek_discharge_3 <- readNWISuv(siteNumber_3, paramaterCd_3, startDate_3, endD
 spcreek_discharge_3 <- renameNWISColumns(spcreek_discharge_3)
 ```
 
+```{r Load in Time Data for Ventura Creek}
+
+siteNumber_4 <- "11118500"
+paramaterCd_4 <- "00060"
+startDate_4 <- "2021-10-03"
+endDate_4 <- "2021-10-05"
+
+ventura_discharge_4 <- readNWISuv(siteNumber_4, paramaterCd_4, startDate_4, endDate_4)
+ventura_discharge_4 <- renameNWISColumns(ventura_discharge_4)
+
+```
+
+```{r Combine Ventura and Santa Paula Dataframes}
+
+creeks_combined <- rbind(spcreek_discharge_3, ventura_discharge_4)
+
+#check to make sure the data I want are in this new dataframe
+unique(creeks_combined$site_no)
+summary(creeks_combined$dateTime)
+
+
+```
+
+```{r Create a Plot Cpmparing the Ventura and Santa Paula Creeks for 10/4}
+creek_comparison_plots <- ggplot(data = creeks_combined, aes(x = dateTime, y = Flow_Inst)) +
+  geom_line(aes(color = site_no)) +
+  labs(color = "Stream Site",
+       x = "Time",
+       y = "Discharge, Cubic Feet / Second",
+       title = "Venture and Santa Paula Stream Flows: 10/2021")+
+  scale_color_manual(labels = c("Santa Paula Stream", "Ventura Stream"), values = c("lightblue", "purple")) +
+  theme_minimal()
+
+creek_comparison_plots
+```
 
