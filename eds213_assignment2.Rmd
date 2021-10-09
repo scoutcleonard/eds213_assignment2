@@ -104,19 +104,28 @@ How does it compare to French?
 
 1.) Add the [Santa Paula Creek](https://waterdata.usgs.gov/nwis/uv?site_no=11113500) gauge to exercise we did in class
 ```{r}
-siteNumber <- "11113500"
-paramaterCd <- "00060"
-startDate <- ""
-endDate <- ""
+siteNumber_1 <- "11113500"
+paramaterCd_1 <- "00060"
+startDate_1 <- ""
+endDate_1 <- ""
 
-spcreek_discharge <- readNWISdv(siteNumber, paramaterCd, startDate, endDate)
-
+spcreek_discharge_1 <- readNWISdv(siteNumber_1, paramaterCd_1, startDate_1, endDate_1)
 ```
 
 2.) What is the best way to query multiple sites using this R package?
+
+**The best way to query multiple sites using this R package is to assign the siteNumbers aregument a vector with multiple site numbers of interest. **
+
+3.) Create a plot showing any stream flow response to the rain of last night (10/04). Determine at what time did the stream flow peaked (if any) at the two locations?
+
 ```{r}
+siteNumber_3 <- "11113500"
+paramaterCd_3 <- "00060"
+startDate_3 <- "2021-10-03"
+endDate_3 <- "2021-10-05"
 
-
-
+spcreek_discharge_3 <- readNWISuv(siteNumber_3, paramaterCd_3, startDate_3, endDate_3)
+spcreek_discharge_3 <- renameNWISColumns(spcreek_discharge_3)
 ```
+
 
