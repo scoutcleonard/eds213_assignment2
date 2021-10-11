@@ -66,7 +66,7 @@ endDate1 <- "2020-10-05"
 
 find_start_date <- readNWISdv(siteNumber1, paramaterCd1, startDate1, endDate1)
 
-summary(find_start_date$Date) #using summary, I can find the minimum date in the Data column, which is the datrt date
+summary(find_start_date$Date) #using summary, I can find the minimum date in the Data column, which is the start date
 ```
 
 *Using the API, I determined that the stream gauge data started October 1st, 1929.*
@@ -111,19 +111,34 @@ alaska_english <- household_languages %>%
 mean_by_year <- alaska_english %>% 
   mutate(percent_english_speaking = speak_only_english / total, na.rm = TRUE) %>% 
   group_by(Year) %>% 
-  summarize(average_eng_percent_byyear = mean(percent_english_speaking))
+  summarize(average_eng_percent_byyear = mean(percent_english_speaking, na.rm = TRUE))
   
 ```
 
 ```{r}
-#plot 
+per_eng_plot <- ggplot(data = mean_by_year, aes(x = Year, y = average_eng_percent_byyear)) +
+  geom_line()
 
-
+per_eng_plot
 ```
 
 ### Bonus
 
 How does it compare to French? 
+
+```{r}
+
+alaska_french <- household_languages %>% 
+  filter(Year >= 2009 & Year <= 2015)
+
+fench_mean_by_year <- alaska_french %>% 
+  mutate(percent_french_speaking = french_or_french_creole / total, na.rm = TRUE) %>% 
+  group_by(Year) %>% 
+  summarize(average_fr_percent_byyear = mean(percent_french_speaking, na.rm = TRUE))
+
+unique(household_languages$french_or_french_creole)
+  
+```
 
 # [Homework: Assignment 2](https://brunj7.github.io/EDS-213-metadata/assignments_w2.html)
 
