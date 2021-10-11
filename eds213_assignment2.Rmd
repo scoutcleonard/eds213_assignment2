@@ -122,24 +122,6 @@ per_eng_plot <- ggplot(data = mean_by_year, aes(x = Year, y = average_eng_percen
 per_eng_plot
 ```
 
-### Bonus
-
-How does it compare to French? 
-
-```{r}
-
-alaska_french <- household_languages %>% 
-  filter(Year >= 2009 & Year <= 2015)
-
-fench_mean_by_year <- alaska_french %>% 
-  mutate(percent_french_speaking = french_or_french_creole / total, na.rm = TRUE) %>% 
-  group_by(Year) %>% 
-  summarize(average_fr_percent_byyear = mean(percent_french_speaking, na.rm = TRUE))
-
-unique(household_languages$french_or_french_creole)
-  
-
-```
 
 # [Homework: Assignment 2](https://brunj7.github.io/EDS-213-metadata/assignments_w2.html)
 
