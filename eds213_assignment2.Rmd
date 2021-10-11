@@ -23,7 +23,7 @@ library(here)
 ```
 
 # [Class Assignment](https://brunj7.github.io/EDS-213-metadata/week_2.html): Using APIs Lab
-##USGS `dataretrieval` R package to retrieve hydrological data
+## USGS `dataretrieval` R package to retrieve hydrological data
 
 ### Exercise 1
 
@@ -83,21 +83,19 @@ Let’s determine what percentage of Alaskan household are speaking only English
 #set inputs
 data_obj <- "https://cn.dataone.org/cn/v2/resolve/urn:uuid:7fc6f6db-c5ea-426a-a743-1f2edafb43b8"
 
-path <- "~/Documents/MEDS/term_2/eds213/class_notes/eds213_notes"
+path <- "~/Documents/MEDS/term_2/eds213/assignments/eds213_assignment2"
 
 #download data and metadata
 download_d1_data(data_obj, path)
 ```
 
 ```{r}
-alaska_data <- read_d1_files("~/Documents/MEDS/term_2/eds213/class_notes/eds213_notes/doi_10.5063_F1CJ8BPH__household_language__csv")
-```
-```{r}
-household_languages <- read.csv(here("doi_10.5063_F1CJ8BPH__household_language__csv", "household_language.csv"))
+alaska_data <- read_d1_files("~/Documents/MEDS/term_2/eds213/assignments/eds213_assignment2/doi_10.5063_F1CJ8BPH__household_language__csv")
 ```
 
-```{r}
-alaska_metadata <- read.csv(here("doi_10.5063_F1CJ8BPH__household_language__csv", "household_language_summary__metadata_csv"))
+```{r METADATA}
+alaska_metadata <- read.csv(here("doi_10.5063_F1CJ8BPH__household_language__csv", "household_language__summary_metadata.csv"))
+
 ```
 
 
