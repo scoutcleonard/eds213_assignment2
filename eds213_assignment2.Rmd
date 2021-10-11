@@ -138,6 +138,7 @@ fench_mean_by_year <- alaska_french %>%
 
 unique(household_languages$french_or_french_creole)
   
+
 ```
 
 # [Homework: Assignment 2](https://brunj7.github.io/EDS-213-metadata/assignments_w2.html)
