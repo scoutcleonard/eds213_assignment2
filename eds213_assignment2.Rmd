@@ -20,6 +20,7 @@ library(dataRetrieval)
 library(tidyverse)
 library(metajam)
 library(here)
+library(gt)
 ```
 
 # [Class Assignment](https://brunj7.github.io/EDS-213-metadata/week_2.html): Using APIs Lab
@@ -50,10 +51,14 @@ renamed_ventura_discharge <- renameNWISColumns(ventura_discharge) #rename column
 ```{r Plot the flow over time}
 
 ventura_flow_over_time <- ggplot(data = renamed_ventura_discharge, aes(x = Date, y = Flow)) +
-  geom_line()
+  geom_line() +
+  labs(title = "Ventura River Flow 10/19-10/20",
+       y = "Discharge (Cubic Feet Per Second)") +
+  theme_minimal()
 
 ventura_flow_over_time
 ```
+
 ### Bonus
 
 How would you try to determine when this stream gauge record started using the API?
@@ -71,7 +76,7 @@ summary(find_start_date$Date) #using summary, I can find the minimum date in the
 
 *Using the API, I determined that the stream gauge data started October 1st, 1929.*
 
-##`metajam`
+## `metajam`
 
 The `metajam` R package relies on the dataONE API to download data and metadata into your R Environment. It is currently supporting KNB, ADC and EDI repositories because they rely on the metadata standard EML.
 
@@ -90,44 +95,49 @@ download_d1_data(data_obj, path)
 ```
 
 ```{r}
-alaska_data <- read_d1_files("~/Documents/MEDS/term_2/eds213/assignments/eds213_assignment2/doi_10.5063_F1CJ8BPH__household_language__csv")
+alaska_data <- read_d1_files(folder_path = "doi_10.5063_F1CJ8BPH__household_language__csv")
 ```
 
 ```{r METADATA}
-alaska_metadata <- read.csv(here("doi_10.5063_F1CJ8BPH__household_language__csv", "household_language__summary_metadata.csv"))
+alaska_summary_metadata <- alaska_data$summary_metadata
 
+alaska_attribute_metadata <- alaska_data$attribute_metadata
 ```
 
 
-```{r}
-household_languages <- read.csv(here("doi_10.5063_F1CJ8BPH__household_language__csv", "household_language.csv"))
+```{r DATA}
+household_languages <- alaska_data$data
 ```
 
-```{r}
+```{r Filter Dataset for Problem}
 
 alaska_english <- household_languages %>% 
   filter(Year >= 2009 & Year <= 2015)
 
 mean_by_year <- alaska_english %>% 
-  mutate(percent_english_speaking = speak_only_english / total, na.rm = TRUE) %>% 
+  mutate(percent_english_speaking = 100*(speak_only_english / total), na.rm = TRUE) %>% 
   group_by(Year) %>% 
   summarize(average_eng_percent_byyear = mean(percent_english_speaking, na.rm = TRUE))
   
 ```
 
-```{r}
+```{r Plot Data for English Speaking Alaskans}
 per_eng_plot <- ggplot(data = mean_by_year, aes(x = Year, y = average_eng_percent_byyear)) +
-  geom_line()
+  geom_line() +
+  labs(title = "English-Speaking-Only Housholds in Alaska 2009-2015",
+       y = "Percent English Speaking") +
+  theme_minimal()
 
 per_eng_plot
 ```
-
+The percent of Alaskan households that speak English only has **increased** between 2009 and 2015. 
 
 # [Homework: Assignment 2](https://brunj7.github.io/EDS-213-metadata/assignments_w2.html)
 
 ## Assignment 2.1
 
 1.) Add the [Santa Paula Creek](https://waterdata.usgs.gov/nwis/uv?site_no=11113500) gauge to exercise we did in class
+
 ```{r}
 siteNumber_1 <- "11113500"
 paramaterCd_1 <- "00060"
@@ -189,3 +199,27 @@ creek_comparison_plots <- ggplot(data = creeks_combined, aes(x = dateTime, y = F
 creek_comparison_plots
 ```
 
+```{r}
+summary(spcreek_discharge_3$Flow_Inst) #max flow is 0.7000
+
+max_times_sp <- spcreek_discharge_3 %>% 
+  filter(Flow_Inst == 0.7000) %>% 
+  gt()
+
+max_times_sp
+```
+
+**The times of maximum flow for the Santa Paula Stream for these dates is October from ~ 10:30 - 11:15 pm.**
+
+```{r}
+summary(ventura_discharge_4$Flow_Inst) #max flow is 1.0800
+
+max_times_ventura <- ventura_discharge_4 %>% 
+  filter(Flow_Inst == 1.0800) %>% 
+  gt()
+
+max_times_ventura
+```
+
+
+**Maximum flow for the Ventura River for these data occurs between 10/05/21 at 7:25 am and 10/06/21 at 6:55 am.**
